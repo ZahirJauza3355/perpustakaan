@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Daftar Buku{% endblock %}
+
+{% block content %}
+
+  <div class="page-header">
+    <div>
+      <h1>Daftar Buku</h1>
+      <p class="page-subtitle">Kelola koleksi buku perpustakaan kamu di satu tempat.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--blue">📖</div>
+      <div>
+        <p class="stat-value">{{ total_buku }}</p>
+        <p class="stat-label">Judul Buku</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--green">📦</div>
+      <div>
+        <p class="stat-value">{{ total_stok }}</p>
+        <p class="stat-label">Total Stok</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--purple">🏷️</div>
+      <div>
+        <p class="stat-value">{{ total_kategori }}</p>
+        <p class="stat-label">Kategori</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <form class="search-form" method="get" action="{{ url_for('index') }}">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        name="search"
+        placeholder="Cari judul, penulis, atau kategori..."
+        value="{{ search }}"
+        class="search-input"
+      >
+      {% if selected_kategori_id %}
+        <input type="hidden" name="kategori_id" value="{{ selected_kategori_id }}">
+      {% endif %}
+      {% if search %}
+        <a href="{{ url_for('index', kategori_id=selected_kategori_id) }}" class="search-clear" title="Hapus pencarian">&times;</a>
+      {% endif %}
+    </form>
+
+    <form method="get" action="{{ url_for('index') }}">
+      {% if search %}
+        <input type="hidden" name="search" value="{{ search }}">
+      {% endif %}
+      <select name="kategori_id" class="filter-select" onchange="this.form.submit()">
+        <option value="">Semua Kategori</option>
+        {% for cat in categories %}
+          <option value="{{ cat.id }}" {{ 'selected' if selected_kategori_id|string == cat.id|string }}>
+            {{ cat.nama }}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
+  </div>
+
+  {% if books|length == 0 %}
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      {% if search %}
+        <h3>Tidak ada hasil untuk "{{ search }}"</h3>
+        <p>Coba kata kunci lain atau <a href="{{ url_for('index') }}">lihat semua buku</a>.</p>
+      {% else %}
+        <h3>Belum ada buku</h3>
+        <p>Mulai tambahkan buku pertama ke perpustakaan kamu.</p>
+        <a href="{{ url_for('add_book') }}" class="btn btn-primary">+ Tambah Buku</a>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="table-card">
+      <table class="book-table">
+        <thead>
+          <tr>
+            <th>Judul</th>
+            <th>Penulis</th>
+            <th>Tahun</th>
+            <th>Kategori</th>
+            <th>Stok</th>
+            <th class="col-actions">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for book in books %}
+          <tr>
+            <td>
+              <span class="book-title">{{ book.judul }}</span>
+            </td>
+            <td>{{ book.penulis }}</td>
+            <td>{{ book.tahun_terbit or '—' }}</td>
+            <td>
+              {% if book.kategori_nama %}
+                <span class="badge">{{ book.kategori_nama }}</span>
+              {% else %}
+                <span class="text-muted">Tanpa kategori</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if book.stok and book.stok > 0 %}
+                <span class="stock stock-ok">{{ book.stok }}</span>
+              {% else %}
+                <span class="stock stock-empty">Habis</span>
+              {% endif %}
+            </td>
+            <td class="col-actions">
+              <div class="action-buttons">
+                <a href="{{ url_for('edit_book', id=book.id) }}" class="btn-icon btn-icon--edit" title="Edit">✏️</a>
+                <form method="POST" action="{{ url_for('delete_book', id=book.id) }}"
+                      onsubmit="return confirm('Yakin ingin menghapus buku \'{{ book.judul }}\'?');" class="inline-form">
+                  <button type="submit" class="btn-icon btn-icon--delete" title="Hapus">🗑️</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+{% endblock %}

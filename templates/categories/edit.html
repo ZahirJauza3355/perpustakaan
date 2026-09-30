@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Edit Kategori{% endblock %}
+
+{% block content %}
+
+  <div class="page-header">
+    <div>
+      <a href="{{ url_for('categories_list') }}" class="back-link">&larr; Kembali ke daftar kategori</a>
+      <h1>Edit Kategori</h1>
+      <p class="page-subtitle">Perbarui nama untuk kategori "{{ category.nama }}".</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="POST" action="{{ url_for('edit_category', id=category.id) }}">
+
+      <div class="form-group">
+        <label for="nama">Nama Kategori <span class="required">*</span></label>
+        <input type="text" id="nama" name="nama" value="{{ category.nama }}" required autofocus>
+      </div>
+
+      <div class="form-actions">
+        <a href="{{ url_for('categories_list') }}" class="btn btn-secondary">Batal</a>
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+      </div>
+
+    </form>
+  </div>
+
+{% endblock %}

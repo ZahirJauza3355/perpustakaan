@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Tambah Buku{% endblock %}
+
+{% block content %}
+
+  <div class="page-header">
+    <div>
+      <a href="{{ url_for('index') }}" class="back-link">&larr; Kembali ke daftar buku</a>
+      <h1>Tambah Buku Baru</h1>
+      <p class="page-subtitle">Isi detail buku yang ingin ditambahkan ke koleksi.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="POST" action="{{ url_for('add_book') }}">
+
+      <div class="form-group">
+        <label for="judul">Judul Buku <span class="required">*</span></label>
+        <input type="text" id="judul" name="judul" placeholder="Contoh: Laskar Pelangi"
+               value="{{ form_data.get('judul', '') }}" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="penulis">Penulis <span class="required">*</span></label>
+        <input type="text" id="penulis" name="penulis" placeholder="Contoh: Andrea Hirata"
+               value="{{ form_data.get('penulis', '') }}" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="tahun_terbit">Tahun Terbit</label>
+          <input type="number" id="tahun_terbit" name="tahun_terbit" placeholder="2024"
+                 min="1000" max="2100" value="{{ form_data.get('tahun_terbit', '') }}">
+        </div>
+        <div class="form-group">
+          <label for="stok">Stok</label>
+          <input type="number" id="stok" name="stok" placeholder="1" min="0"
+                 value="{{ form_data.get('stok', 1) }}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="kategori_id">Kategori</label>
+        <div class="select-with-action">
+          <select id="kategori_id" name="kategori_id">
+            <option value="">— Tanpa kategori —</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}" {{ 'selected' if form_data.get('kategori_id')|string == cat.id|string }}>
+                {{ cat.nama }}
+              </option>
+            {% endfor %}
+          </select>
+          <a href="{{ url_for('add_category') }}" class="btn-inline-add">+ Kategori baru</a>
+        </div>
+        {% if categories|length == 0 %}
+          <p class="form-hint">Belum ada kategori. Buat kategori dulu lewat tombol di atas.</p>
+        {% endif %}
+      </div>
+
+      <div class="form-actions">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Batal</a>
+        <button type="submit" class="btn btn-primary">Simpan Buku</button>
+      </div>
+
+    </form>
+  </div>
+
+{% endblock %}

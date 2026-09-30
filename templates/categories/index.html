@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Kategori{% endblock %}
+
+{% block content %}
+
+  <div class="page-header">
+    <div>
+      <h1>Kategori Buku</h1>
+      <p class="page-subtitle">Kelola kategori yang dipakai saat menambahkan buku.</p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <a href="{{ url_for('add_category') }}" class="btn btn-primary">+ Tambah Kategori</a>
+  </div>
+
+  {% if categories|length == 0 %}
+    <div class="empty-state">
+      <div class="empty-icon">🏷️</div>
+      <h3>Belum ada kategori</h3>
+      <p>Buat kategori pertama, misalnya "Fiksi" atau "Sains".</p>
+      <a href="{{ url_for('add_category') }}" class="btn btn-primary">+ Tambah Kategori</a>
+    </div>
+  {% else %}
+    <div class="table-card">
+      <table class="book-table">
+        <thead>
+          <tr>
+            <th>Nama Kategori</th>
+            <th>Jumlah Buku</th>
+            <th class="col-actions">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cat in categories %}
+          <tr>
+            <td>
+              <div class="category-name-cell">
+                <span class="category-dot"></span>
+                <span class="book-title">{{ cat.nama }}</span>
+              </div>
+            </td>
+            <td>
+              {% if cat.jumlah_buku > 0 %}
+                <span class="badge">{{ cat.jumlah_buku }} buku</span>
+              {% else %}
+                <span class="category-count">Belum ada buku</span>
+              {% endif %}
+            </td>
+            <td class="col-actions">
+              <div class="action-buttons">
+                <a href="{{ url_for('edit_category', id=cat.id) }}" class="btn-icon btn-icon--edit" title="Edit">✏️</a>
+                <form method="POST" action="{{ url_for('delete_category', id=cat.id) }}"
+                      onsubmit="return confirm('Yakin ingin menghapus kategori \'{{ cat.nama }}\'?{% if cat.jumlah_buku > 0 %} {{ cat.jumlah_buku }} buku terkait akan menjadi tanpa kategori.{% endif %}');"
+                      class="inline-form">
+                  <button type="submit" class="btn-icon btn-icon--delete" title="Hapus">🗑️</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Tambah Kategori{% endblock %}
+
+{% block content %}
+
+  <div class="page-header">
+    <div>
+      <a href="{{ url_for('categories_list') }}" class="back-link">&larr; Kembali ke daftar kategori</a>
+      <h1>Tambah Kategori Baru</h1>
+      <p class="page-subtitle">Kategori ini akan langsung bisa dipilih saat menambah/edit buku.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="POST" action="{{ url_for('add_category') }}">
+
+      <div class="form-group">
+        <label for="nama">Nama Kategori <span class="required">*</span></label>
+        <input type="text" id="nama" name="nama" placeholder="Contoh: Fiksi, Sains, Sejarah"
+               value="{{ form_data.get('nama', '') }}" required autofocus>
+      </div>
+
+      <div class="form-actions">
+        <a href="{{ url_for('categories_list') }}" class="btn btn-secondary">Batal</a>
+        <button type="submit" class="btn btn-primary">Simpan Kategori</button>
+      </div>
+
+    </form>
+  </div>
+
+{% endblock %}
